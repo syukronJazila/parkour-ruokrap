@@ -41,7 +41,7 @@ main(){
         if(isObstacle && obstacle == 1){ // mengecek apakah muncul 2 jurang sekaligus 
             r = 50; // jika iya maka jurang kedua diganti dengan tanah
             isObstacle = false; 
-            obstacle = 2; // untuk keperluan pengecekan berapa tanah yg telah muncul
+            obstacle = 2; // untuk keperluan pengecekan berapa tanah setelahnya yg telah muncul
         }
         if(isWall){ 
         // mengecek apakah dinding muncul, jika sudah muncul 1 dinding maka akan digenerate dinding
@@ -56,9 +56,9 @@ main(){
             r = 87; 
             if(nWall > 6){ // batas kemunculan dinding adalah 7 (karena nWall bisa bernilai 0 - 6)
                 isWall = false;
-                obstacle = 2;
+                obstacle = 2; // untuk keperluan pengecekan berapa tanah setelahnya yg telah muncul
                 nWall = -1;
-                r = 50;
+                r = 50; // jika nWall melebihi 6 maka munculkan tanah dan jgn munculkan dinding 
             }
         }
 
@@ -66,7 +66,7 @@ main(){
         for (int j = n-1; j >= 0; j--)
         {
             if(j == 0){
-                arr[0] = "#"; // nilai defaulr ground bawah (# -> tanah / dinding)
+                arr[0] = "#"; // nilai default ground bawah (# -> tanah / dinding)
                 arr2[0] = " "; // nilai default ground atas (spasi -> tidak ada obstacle)
                 break;
             }
