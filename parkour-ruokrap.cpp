@@ -69,6 +69,12 @@ void cekTombol() {
                         Sleep(100);
                     }
                 }
+		//? Fix bug melayang setelah lompat di obstacle
+                if(p1.posY == 9 && arr2[p1.posX] == " " && arr[p1.posX] == "#"){
+                    p1.posY += 1;
+                    pindahPosisi();
+                    Sleep(100);
+                }  
             }
             //? Buat cek tombok ke kiri
             if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
