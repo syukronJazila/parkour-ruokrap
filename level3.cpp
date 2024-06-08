@@ -228,7 +228,7 @@ void enemyMove(){
             e1[i].posX++; 
             //Kalau uda lewat batas, hapus enemy
             if (e1[i].posX == 50) {e1.erase(e1.begin() + i);}
-            else if (e1[i].posX == p1.posX && e1[i].posY == p1.posY){Kalah(true); e1.erase(e1.begin() + i);}
+            else if (e1[i].posX == p1.posX && e1[i].posY == p1.posY){Kalah(false); e1.erase(e1.begin() + i);}
             // Kalau di depan musuh ad ground 2, lompat ke ground 3
             else if (ground2[e1[i].posX + 1]== "#" && !e1[i].jump2 ) {e1[i].jump2 = true; e1[i].posY--;}
             // Kalau di depan musuh ad ground 3, lompat ke ground 4
