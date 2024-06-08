@@ -170,10 +170,20 @@ void tembakPeluru(){
                 sudah = false;
                 gotoxy(peluru[j].LposX, peluru[j].LposY); cout << " ";  // Hapus karakter lama
                 peluru[j].posX--;
-                if (peluru[j].posX == 3 || arr2[peluru[j].posX] == "#") {
+                if (peluru[j].posX == 3) {
                     //gotoxy(a.posX, a.posY); cout << " ";
                     peluru.erase(peluru.begin() + j);
-                }else if (peluru[j].posX == 3){ 
+                }else if (ground2[peluru[j].posX] == "#" && peluru[j].posY == 10 ){  //Menghapus peluru yg kenak dinding
+                    peluru.erase(peluru.begin() + j);
+                }else if (ground3[peluru[j].posX] == "#" && peluru[j].posY == 9 ){
+                    peluru.erase(peluru.begin() + j);
+                }else if (ground4[peluru[j].posX] == "#" && peluru[j].posY == 8 ){
+                    peluru.erase(peluru.begin() + j);
+                }else if (ground5[peluru[j].posX] == "#" && peluru[j].posY == 7 ){
+                    peluru.erase(peluru.begin() + j);
+                }
+                
+                else if (peluru[j].posX == 3){ 
                     arr2[peluru[j].posX] = " ";
                     peluru.erase(peluru.begin() + j); 
                  }else if ((arr2[peluru[j].posX] == "B" || arr2[peluru[j].posX +1] == "B" || arr2[peluru[j].posX-1] == "B" ) && peluru[j].posY == 10){
@@ -339,7 +349,7 @@ main(){
         if(p1.posY == 7 && ground4[p1.posX] == " " && ground3[p1.posX] == " " && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground5[p1.posX-2] == "#"){Kalah(true);}
 
         gotoxy(p1.posX,p1.posY); cout << "A" ;
-        Sleep(200);
+        Sleep(120);
     }
 
     gotoxy(22,0);cout << "Press E to End, R to Restart";
