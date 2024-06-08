@@ -214,7 +214,7 @@ void Kalah(bool isJatuh){
     cout << "YOUR SCORE:" << skor;
 }
 void enemyMove(){
-    while(true){
+    while(!isDead){
         for (int i=e1.size()-1; i>=0; i--){
             for(int j=peluru.size()-1; j>=0; j--){
                 //cek player kena peluru
@@ -271,7 +271,7 @@ main(){
     skor = 0;
 
     //? pakek thread, jadi ada 2 program yg bekerja di waktu bersamaan, cekTombol() dan main() program
-	thread threadPemeriksaanTombol(cekTombol);
+    thread threadPemeriksaanTombol(cekTombol);
     thread musuhGerak(enemyMove);
     p1.posX = 21;
 	p1.posY = 10;
@@ -417,17 +417,17 @@ main(){
         Sleep(200);
     }
 
+    threadPemeriksaanTombol.join();
+    musuhGerak.join();
     gotoxy(22,0);cout << "Press E to End, R to Restart";
     while(c != 'E' && c != 'e'){
         gotoxy(33,5);
         c = getch();
         if(c == 'R' || c == 'r'){
             isDead = false;
-            threadPemeriksaanTombol.join();
             goto start; 
         }
     }
-    threadPemeriksaanTombol.join();
     exit;
 
 }
