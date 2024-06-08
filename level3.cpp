@@ -214,7 +214,7 @@ void Kalah(bool isJatuh){
     cout << "YOUR SCORE:" << skor;
 }
 void enemyMove(){
-    while(!isDead){
+    while(true){
         for (int i=e1.size()-1; i>=0; i--){
             for(int j=peluru.size()-1; j>=0; j--){
                 //cek player kena peluru
@@ -228,6 +228,7 @@ void enemyMove(){
             e1[i].posX++; 
             //Kalau uda lewat batas, hapus enemy
             if (e1[i].posX == 50) {e1.erase(e1.begin() + i);}
+            else if (e1[i].posX == p1.posX && e1[i].posY == p1.posY){Kalah(true); e1.erase(e1.begin() + i);}
             // Kalau di depan musuh ad ground 2, lompat ke ground 3
             else if (ground2[e1[i].posX + 1]== "#" && !e1[i].jump2 ) {e1[i].jump2 = true; e1[i].posY--;}
             // Kalau di depan musuh ad ground 3, lompat ke ground 4
@@ -237,13 +238,13 @@ void enemyMove(){
             // Kalau di depan musuh ad ground 5, lompat ke atas ground 5
             else if (ground5[e1[i].posX + 1]== "#" && !e1[i].jump5 ) {e1[i].jump5 = true; e1[i].posY--;}
             //DI bawah ini skrip biar musuh turun
-            // kalau skrg player  di ground 5 dan g5 kosong, turunkan enemy
+            // kalau skrg musuh  di atas ground 5 dan g5 kosong, turunkan enemy
             else if (ground5[e1[i].posX] == " " && e1[i].jump5){e1[i].jump5 = false; e1[i].posY++;}
-            // kalau skrg player  di ground 4 dan g4 kosong, turunkan enemy
+            // kalau skrg musuh  di atas ground 4 dan g4 kosong, turunkan enemy
             else if (ground4[e1[i].posX] == " " && e1[i].jump4){e1[i].jump4 = false; e1[i].posY++;}
-            // kalau skrg player  di ground 3 dan g3 kosong, turunkan enemy
+            // kalau skrg musuh  di atas ground 3 dan g3 kosong, turunkan enemy
             else if (ground3[e1[i].posX] == " " && e1[i].jump3){e1[i].jump3 = false; e1[i].posY++;}
-            // kalau skrg player  di ground 2 dan g2 kosong, turunkan enemy
+            // kalau skrg musuh  di atas ground 2 dan g2 kosong, turunkan enemy
             else if (ground2[e1[i].posX] == " " && e1[i].jump2){e1[i].jump2 = false; e1[i].posY++;}
 
             gotoxy(e1[i].posX, e1[i].posY); cout << "B";    // Cetak karakter di posisi baru
@@ -271,7 +272,7 @@ main(){
     skor = 0;
 
     //? pakek thread, jadi ada 2 program yg bekerja di waktu bersamaan, cekTombol() dan main() program
-    thread threadPemeriksaanTombol(cekTombol);
+	thread threadPemeriksaanTombol(cekTombol);
     thread musuhGerak(enemyMove);
     p1.posX = 21;
 	p1.posY = 10;
@@ -417,17 +418,17 @@ main(){
         Sleep(200);
     }
 
-    threadPemeriksaanTombol.join();
-    musuhGerak.join();
     gotoxy(22,0);cout << "Press E to End, R to Restart";
     while(c != 'E' && c != 'e'){
         gotoxy(33,5);
         c = getch();
         if(c == 'R' || c == 'r'){
             isDead = false;
+            threadPemeriksaanTombol.join();
             goto start; 
         }
     }
+    threadPemeriksaanTombol.join();
     exit;
 
 }
