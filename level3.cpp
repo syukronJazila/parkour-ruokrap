@@ -401,17 +401,17 @@ main(){
         if(p1.posY == 6 && ground5[p1.posX] == " " && (ground5[p1.posX+1] == "#" || ground5[p1.posX+2] == "#" || ground5[p1.posX+3] == "#")){turun();}
 
         //Periksa apakah karakter nabrak dinding
-        // if(p1.posY == 11 && ground1[p1.posX] == "#"){Kalah(false);}
-        // if(p1.posY == 10 && ground2[p1.posX] == "#"){Kalah(false);}
-        // if(p1.posY == 9 && ground3[p1.posX] == "#"){Kalah(false);}
-        // if(p1.posY == 8 && ground4[p1.posX] == "#"){Kalah(false);}
-        // if(p1.posY == 7 && ground5[p1.posX] == "#"){Kalah(false);}
+        if(p1.posY == 11 && ground1[p1.posX] == "#"){Kalah(false);}
+        if(p1.posY == 10 && ground2[p1.posX] == "#"){Kalah(false);}
+        if(p1.posY == 9 && ground3[p1.posX] == "#"){Kalah(false);}
+        if(p1.posY == 8 && ground4[p1.posX] == "#"){Kalah(false);}
+        if(p1.posY == 7 && ground5[p1.posX] == "#"){Kalah(false);}
 
-        // // Periksa apakah karakter jatuh ke jurang
-        // if(p1.posY == 10 && ground1[p1.posX] == " " && ground2[p1.posX-2] == "#"){Kalah(true);}
-        // if(p1.posY == 9 && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground3[p1.posX-2] == "#"){Kalah(true);}
-        // if(p1.posY == 8 && ground3[p1.posX] == " " && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground4[p1.posX-2] == "#"){Kalah(true);}
-        // if(p1.posY == 7 && ground4[p1.posX] == " " && ground3[p1.posX] == " " && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground5[p1.posX-2] == "#"){Kalah(true);}
+        // Periksa apakah karakter jatuh ke jurang
+        if(p1.posY == 10 && ground1[p1.posX] == " " && ground2[p1.posX-2] == "#"){Kalah(true);}
+        if(p1.posY == 9 && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground3[p1.posX-2] == "#"){Kalah(true);}
+        if(p1.posY == 8 && ground3[p1.posX] == " " && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground4[p1.posX-2] == "#"){Kalah(true);}
+        if(p1.posY == 7 && ground4[p1.posX] == " " && ground3[p1.posX] == " " && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground5[p1.posX-2] == "#"){Kalah(true);}
 
         gotoxy(p1.posX,p1.posY); cout << "A" ;
         Sleep(200);
