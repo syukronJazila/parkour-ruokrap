@@ -1,7 +1,6 @@
 #include <iostream>
 #include <windows.h>
 #include <vector>
-#include "function.h"
 using namespace std;
 
 void gotoxy(int x, int y) {
@@ -11,14 +10,14 @@ void gotoxy(int x, int y) {
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-
-
 class Player {
 public:
+    string karakter;
     int posX, posY, LposX, LposY;
     bool jump2 = false, jump3 = false, jump4 = false, jump5 = false;
 
-    Player(int posX, int posY, int LposX, int LposY) {
+    Player(string karakter,int posX, int posY, int LposX, int LposY) {
+        this->karakter = karakter;
         this->posX = posX;
         this->posY = posY;
         this->LposX = LposX;
@@ -74,7 +73,7 @@ public:
 
     void pindahPosisi(){
         gotoxy(LposX,LposY); cout << " ";  // Hapus karakter lama
-        gotoxy(posX, posY); cout << "A";    // Cetak karakter di posisi baru
+        gotoxy(posX, posY); cout << karakter;    // Cetak karakter di posisi baru
         LposX = posX;  // Simpan posisi lama
         LposY = posY;
     }
