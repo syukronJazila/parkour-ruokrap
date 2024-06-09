@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <windows.h>
 #include <vector>
@@ -25,7 +26,7 @@ public:
     }
 
 
-    void moveUp(string ground2[50],string ground3[50],string ground4[50],string ground5[50]) {
+    void moveUp(const string (&ground2)[50],const string (&ground3)[50],const string (&ground4)[50],const string (&ground5)[50]) {
         int i;
         //Untuk Naik
         for (i=1; i<=3; i++){
