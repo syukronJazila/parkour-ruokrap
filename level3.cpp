@@ -4,8 +4,6 @@
 #include <windows.h>
 #include <thread>
 
-#include "classPlayer.h"
-
 using namespace std;
 
 struct Player {
@@ -21,9 +19,6 @@ struct Ammo{
 Player p1;
 vector<Player> e1;
 vector<Ammo> peluru;
-bool sudah=true, isLift = false, isOnWall = false, isDead = false;
-int jmlhTurun = 0;
-int skor=0;
 
 const int n = 50;
 string ground1[n],ground2[n],ground3[n],ground4[n],ground5[n]; 
@@ -89,72 +84,70 @@ void turun(){
     p1.posY++;
 }
 
-void cekTombol() {
+void cekTombol(bool *isDead) {
     Ammo tempPeluru;
     while (!isDead) {
         bool moved = false;
 		int i,y;
-        if (sudah == true){
-            //? Buat cek tombok ke atas 
-            if (GetAsyncKeyState(VK_UP) & 0x8000) {
-                if (p1.posY > 0) {
-                for (i=1; i<=3; i++){
-                    //? Minus artinya naik
-                    p1.posY -= 1;
-                    pindahPosisi();
-                    Sleep(115);
-                }
-                
-                for (i=1; i<=3; i++){
-                    // jika ada ground(bukan jurang) dibawah karakter maka hentikan turun 
-                    if(p1.posY == 9 && ground2[p1.posX] == "#"){break;}
-                    if(p1.posY == 8 && ground3[p1.posX] == "#"){break;}
-                    if(p1.posY == 7 && ground4[p1.posX] == "#"){break;}
-                    if(p1.posY == 6 && ground5[p1.posX] == "#"){break;}
-                    p1.posY += 1;
-                    pindahPosisi();
-                    Sleep(100);  
-                    // jika turun sudah selesai dan karakter masih melayang maka turun 1 ground
-                    // sama seperti Fix bug melayang setelah lompat di obstacle
-                    if(i == 3){
-                        if(p1.posY == 9 && ground2[p1.posX] == " "){turun();}
-                        if(p1.posY == 8 && ground3[p1.posX] == " "){turun();}
-                        if(p1.posY == 7 && ground4[p1.posX] == " "){turun();}
-                        if(p1.posY == 6 && ground5[p1.posX] == " "){turun();}
-                    }
-                }
-                }
-            }
-            //? Buat cek tombok ke kiri
-            if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
-                if (p1.posX > 0) {
-                    //? gerak ke kiri
-                    p1.posX -= 1;
-                    pindahPosisi(); 
-                }
-            }
-            if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
-                if (p1.posX < 49) {  
-                    p1.posX += 1;
-                    pindahPosisi();
-                }
+        //? Buat cek tombok ke atas 
+        if (GetAsyncKeyState(VK_UP) & 0x8000) {
+            if (p1.posY > 0) {
+            for (i=1; i<=3; i++){
+                //? Minus artinya naik
+                p1.posY -= 1;
+                pindahPosisi();
+                Sleep(115);
             }
             
-            //? peluru muncul klo spasi di tekan
-            if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
-            //? tampilkan peluru di depan karakter
-            gotoxy(p1.posX-1,p1.posY); cout << "-";
-            tempPeluru.posX = p1.posX-1;
-            tempPeluru.posY = p1.posY;
-            tempPeluru.LposX = p1.posX-1;
-            tempPeluru.LposY = p1.posY;
-            //? masukkan peluru ke vektor
-            peluru.push_back(tempPeluru);
-            
+            for (i=1; i<=3; i++){
+                // jika ada ground(bukan jurang) dibawah karakter maka hentikan turun 
+                if(p1.posY == 9 && ground2[p1.posX] == "#"){break;}
+                if(p1.posY == 8 && ground3[p1.posX] == "#"){break;}
+                if(p1.posY == 7 && ground4[p1.posX] == "#"){break;}
+                if(p1.posY == 6 && ground5[p1.posX] == "#"){break;}
+                p1.posY += 1;
+                pindahPosisi();
+                Sleep(100);  
+                // jika turun sudah selesai dan karakter masih melayang maka turun 1 ground
+                // sama seperti Fix bug melayang setelah lompat di obstacle
+                if(i == 3){
+                    if(p1.posY == 9 && ground2[p1.posX] == " "){turun();}
+                    if(p1.posY == 8 && ground3[p1.posX] == " "){turun();}
+                    if(p1.posY == 7 && ground4[p1.posX] == " "){turun();}
+                    if(p1.posY == 6 && ground5[p1.posX] == " "){turun();}
+                }
             }
-
-            Sleep(100);
+            }
         }
+        //? Buat cek tombok ke kiri
+        if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
+            if (p1.posX > 0) {
+                //? gerak ke kiri
+                p1.posX -= 1;
+                pindahPosisi(); 
+            }
+        }
+        if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
+            if (p1.posX < 49) {  
+                p1.posX += 1;
+                pindahPosisi();
+            }
+        }
+        
+        //? peluru muncul klo spasi di tekan
+        if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
+        //? tampilkan peluru di depan karakter
+        gotoxy(p1.posX-1,p1.posY); cout << "-";
+        tempPeluru.posX = p1.posX-1;
+        tempPeluru.posY = p1.posY;
+        tempPeluru.LposX = p1.posX-1;
+        tempPeluru.LposY = p1.posY;
+        //? masukkan peluru ke vektor
+        peluru.push_back(tempPeluru);
+        
+        }
+        Sleep(100);
+        
     }
 }
 
@@ -165,7 +158,6 @@ void tembakPeluru(){
             int j;
             //? Kita gerakkan setiap peluru
             for (j=peluru.size()-1; j>=0; j--){
-                sudah = false;
                 gotoxy(peluru[j].LposX, peluru[j].LposY); cout << " ";  // Hapus karakter lama
                 peluru[j].posX--;
                 //Menghapus peluru yg kenak dinding
@@ -179,23 +171,23 @@ void tembakPeluru(){
                     peluru[j].LposX = peluru[j].posX;  // Simpan posisi lama
                     peluru[j].LposY = peluru[j].posY; 
                 }
-                sudah = true;
                  
             }  
  }  
 
-void Kalah(bool isJatuh){
+void Kalah(bool isJatuh, bool* isDead, int* skor){
     if(isJatuh){
         p1.posY = 11;
         pindahPosisi();
     }else p1.posX++;
-    isDead = true;
+
+    *isDead = true;
     gotoxy(21,4);
     cout <<"YOU LOSE";
     gotoxy(19,5);
     cout << "YOUR SCORE:" << skor;
 }
-void enemyMove(){
+void enemyMove(bool* isDead, int* skor){
     while(!isDead){
         for (int i=e1.size()-1; i>=0; i--){
             for(int j=peluru.size()-1; j>=0; j--){
@@ -210,7 +202,7 @@ void enemyMove(){
             e1[i].posX++; 
             //Kalau uda lewat batas, hapus enemy
             if (e1[i].posX == 50) {e1.erase(e1.begin() + i);}
-            else if (e1[i].posX == p1.posX && e1[i].posY == p1.posY){Kalah(false); e1.erase(e1.begin() + i);}
+            else if (e1[i].posX == p1.posX && e1[i].posY == p1.posY){Kalah(false,isDead,skor); e1.erase(e1.begin() + i);}
             // Kalau di depan musuh ad ground 2, lompat ke ground 3
             else if (ground2[e1[i].posX + 1]== "#" && !e1[i].jump2 ) {e1[i].jump2 = true; e1[i].posY--;}
             else if (ground3[e1[i].posX + 1]== "#" && !e1[i].jump3 ) {e1[i].jump3 = true; e1[i].posY--;}
@@ -244,11 +236,12 @@ void summonEnemy(int x,int y){
 main(){
     start:
     system("cls");
-    skor = 0;
+    bool sudah=true, isLift = false, isOnWall = false, isDead = false;
+    int jmlhTurun = 0, skor=0;
 
-    //? pakek thread, jadi ada 2 program yg bekerja di waktu bersamaan, cekTombol() dan main() program
-	thread threadPemeriksaanTombol(cekTombol);
-    thread musuhGerak(enemyMove);
+    // pakek thread, jadi ada 2 program yg bekerja di waktu bersamaan, cekTombol() dan main() program
+	thread threadPemeriksaanTombol(cekTombol, &isDead);
+    thread musuhGerak(enemyMove, &isDead, &skor);
     p1.posX = 21;
 	p1.posY = 10;
 	p1.LposX = 21;
@@ -363,17 +356,17 @@ main(){
         if(p1.posY == 6 && ground5[p1.posX] == " " && (ground5[p1.posX+1] == "#" || ground5[p1.posX+2] == "#" || ground5[p1.posX+3] == "#"))turun();
 
         //Periksa apakah karakter nabrak dinding
-        if(p1.posY == 11 && ground1[p1.posX] == "#")Kalah(false);
-        if(p1.posY == 10 && ground2[p1.posX] == "#")Kalah(false);
-        if(p1.posY == 9 && ground3[p1.posX] == "#")Kalah(false);
-        if(p1.posY == 8 && ground4[p1.posX] == "#")Kalah(false);
-        if(p1.posY == 7 && ground5[p1.posX] == "#")Kalah(false);
+        if(p1.posY == 11 && ground1[p1.posX] == "#")Kalah(false, &isDead, &skor);
+        if(p1.posY == 10 && ground2[p1.posX] == "#")Kalah(false, &isDead, &skor);
+        if(p1.posY == 9 && ground3[p1.posX] == "#")Kalah(false, &isDead, &skor);
+        if(p1.posY == 8 && ground4[p1.posX] == "#")Kalah(false, &isDead, &skor);
+        if(p1.posY == 7 && ground5[p1.posX] == "#")Kalah(false, &isDead, &skor);
 
         // Periksa apakah karakter jatuh ke jurang
-        if(p1.posY == 10 && ground1[p1.posX] == " " && ground2[p1.posX-2] == "#")Kalah(true);
-        if(p1.posY == 9 && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground3[p1.posX-2] == "#")Kalah(true);
-        if(p1.posY == 8 && ground3[p1.posX] == " " && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground4[p1.posX-2] == "#")Kalah(true);
-        if(p1.posY == 7 && ground4[p1.posX] == " " && ground3[p1.posX] == " " && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground5[p1.posX-2] == "#")Kalah(true);
+        if(p1.posY == 10 && ground1[p1.posX] == " " && ground2[p1.posX-2] == "#")Kalah(true, &isDead, &skor);
+        if(p1.posY == 9 && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground3[p1.posX-2] == "#")Kalah(true, &isDead, &skor);
+        if(p1.posY == 8 && ground3[p1.posX] == " " && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground4[p1.posX-2] == "#")Kalah(true, &isDead, &skor);
+        if(p1.posY == 7 && ground4[p1.posX] == " " && ground3[p1.posX] == " " && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground5[p1.posX-2] == "#")Kalah(true, &isDead, &skor);
 
         gotoxy(p1.posX,p1.posY); cout << "A" ;
         Sleep(200);
