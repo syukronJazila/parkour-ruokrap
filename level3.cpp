@@ -6,16 +6,11 @@
 #include "player.h"
 using namespace std;
 
-struct Player2 {
-    int posX, posY, LposX, LposY;
-    bool jump2=false, jump3=false, jump4=false, jump5=false;
-};
-
 struct Ammo{
     int posX,posY,LposX,LposY;
 };
 
-Player p1(21,10,21,10);
+Player p1("A",21,10,21,10);
 vector<Player> e1;
 vector<Ammo> peluru;
 bool  isLift = false, isOnWall = false;
@@ -69,16 +64,6 @@ void shiftGround(){
     }
 }
 
-void pindahPosisi(){
-	gotoxy(p1.LposX, p1.LposY); cout << " ";  // Hapus karakter lama
-    gotoxy(p1.posX, p1.posY); cout << "A";    // Cetak karakter di posisi baru
-    p1.LposX = p1.posX;  // Simpan posisi lama
-    p1.LposY = p1.posY;
-}
-
-void turun(){
-    p1.posY++;
-}
 
 void cekTombol(bool *isDead) {
     Ammo tempPeluru;
@@ -138,7 +123,7 @@ void tembakPeluru(){
 void Kalah(bool isJatuh,bool *isDead){
     if(isJatuh){
         p1.posY = 11;
-        pindahPosisi();
+        p1.pindahPosisi();
     }else p1.posX++;
     *isDead = true;
     e1.clear();
@@ -180,8 +165,8 @@ void enemyMove(bool *isDead){
 }
 
 void summonEnemy(int x,int y){
-    Player tempEnemy(x,y,x,y);
-    gotoxy(x,y); cout << "B";
+    Player tempEnemy("B",x,y,x,y);
+    gotoxy(x,y); cout << tempEnemy.karakter;
     e1.push_back(tempEnemy);
             
 }
@@ -300,10 +285,10 @@ main(){
         tembakPeluru();
 
         // Periksa apakah karakter harus turun satu ground
-        if(p1.posY == 9 && ground2[p1.posX] == " " && (ground2[p1.posX+1] == "#" || ground2[p1.posX+2] == "#" || ground2[p1.posX+3] == "#"))turun();
-        if(p1.posY == 8 && ground3[p1.posX] == " " && (ground3[p1.posX+1] == "#" || ground3[p1.posX+2] == "#" || ground3[p1.posX+3] == "#"))turun();
-        if(p1.posY == 7 && ground4[p1.posX] == " " && (ground4[p1.posX+1] == "#" || ground4[p1.posX+2] == "#" || ground4[p1.posX+3] == "#"))turun();
-        if(p1.posY == 6 && ground5[p1.posX] == " " && (ground5[p1.posX+1] == "#" || ground5[p1.posX+2] == "#" || ground5[p1.posX+3] == "#"))turun();
+        if(p1.posY == 9 && ground2[p1.posX] == " " && (ground2[p1.posX+1] == "#" || ground2[p1.posX+2] == "#" || ground2[p1.posX+3] == "#"))p1.moveDown();
+        if(p1.posY == 8 && ground3[p1.posX] == " " && (ground3[p1.posX+1] == "#" || ground3[p1.posX+2] == "#" || ground3[p1.posX+3] == "#"))p1.moveDown();
+        if(p1.posY == 7 && ground4[p1.posX] == " " && (ground4[p1.posX+1] == "#" || ground4[p1.posX+2] == "#" || ground4[p1.posX+3] == "#"))p1.moveDown();
+        if(p1.posY == 6 && ground5[p1.posX] == " " && (ground5[p1.posX+1] == "#" || ground5[p1.posX+2] == "#" || ground5[p1.posX+3] == "#"))p1.moveDown();
 
         //Periksa apakah karakter nabrak dinding
         if(p1.posY == 11 && ground1[p1.posX] == "#")Kalah(false,&isDead);
@@ -318,7 +303,7 @@ main(){
         if(p1.posY == 8 && ground3[p1.posX] == " " && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground4[p1.posX-2] == "#")Kalah(true,&isDead);
         if(p1.posY == 7 && ground4[p1.posX] == " " && ground3[p1.posX] == " " && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground5[p1.posX-2] == "#")Kalah(true,&isDead);
 
-        gotoxy(p1.posX,p1.posY); cout << "A" ;
+        gotoxy(p1.posX,p1.posY); cout << p1.karakter ;
         Sleep(200);
     }
 
