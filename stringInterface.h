@@ -183,6 +183,18 @@ const string level2 =
 const string level3 =
     "--- Level 1 --- Kill the monsters and reach the score to complete the level.";
 
+void green(){
+    cout << "\033[32m";
+}
+
+void red(){
+    cout << "\033[31m";
+}
+
+void white(){
+    cout << "\033[0m";
+}
+
 const string levels[] = {level1, level2, level3};
 
 inline const string levelCompleted(int level)
