@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <windows.h>
 #include <vector>
@@ -10,6 +9,8 @@ void gotoxy(int x, int y) {
     coord.Y = y;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
+
+
 
 class Player {
 public:
@@ -26,7 +27,7 @@ public:
     }
 
 
-    void moveUp(const string (&ground2)[50],const string (&ground3)[50],const string (&ground4)[50],const string (&ground5)[50]) {
+    void moveUp(string ground2[50],string ground3[50],string ground4[50],string ground5[50]) {
         int i;
         //Untuk Naik
         for (i=1; i<=3; i++){
@@ -57,6 +58,7 @@ public:
 
     void moveDown(){posY++;}
 
+
     void moveLeft() {
         if (posX > 0) {
             posX -= 1;
@@ -71,12 +73,43 @@ public:
         }
     }
 
-
     void pindahPosisi(){
         gotoxy(LposX,LposY); cout << " ";  // Hapus karakter lama
         gotoxy(posX, posY); cout << karakter;    // Cetak karakter di posisi baru
         LposX = posX;  // Simpan posisi lama
         LposY = posY;
+    }
+
+    void lompatEnemy(string ground2[50],string ground3[50],string ground4[50],string ground5[50]){
+        int i;
+        //Untuk Naik
+        for (i=1; i<=3; i++){
+            posY--; 
+            posX++;
+            pindahPosisi();
+            Sleep(115);
+        }
+        moveRight();
+        
+        //Untuk turun
+        for (i=1; i<=3; i++){
+            // if(posY == 9 && ground2[posX] == "#"){break;}
+            // if(posY == 8 && ground3[posX] == "#"){break;}
+            // if(posY == 7 && ground4[posX] == "#"){break;}
+            // if(posY == 6 && ground5[posX] == "#"){break;}
+            // jika ada ground(bukan jurang) dibawah karakter maka hentikan turun 
+            posY++;
+            pindahPosisi();
+            Sleep(100);  
+            // jika turun sudah selesai dan karakter masih melayang maka turun 1 ground
+            // sama seperti Fix bug melayang setelah lompat di obstacle
+            if(i == 3){
+                if(posY == 9 && ground2[posX] == " "){posY++;}
+                if(posY == 8 && ground3[posX] == " "){posY++;}
+                if(posY == 7 && ground4[posX] == " "){posY++;}
+                if(posY == 6 && ground5[posX] == " "){posY++;}
+            }
+        }
     }
 
 
