@@ -1,6 +1,8 @@
 #include "library.h"
 #include "stringInterface.h"
 
+using namespace std;
+
 void gotoxy(int x, int y)
 {
     COORD coord;
@@ -87,12 +89,14 @@ void printXY(vector<string> text, int x, int y)
     }
 }
 
-void printLevel(int i){
+void printLevel(int i)
+{
     gotoxy(0, 0);
     cout << levels[i];
 };
 
-void printKeysf(){
+void printKeysf()
+{
     gotoxy(0, 17);
     cout << keysFunction;
 };
@@ -101,9 +105,8 @@ int main()
 {
     system("cls");
 
-    // Process the text with the given parameters
     int i = 12;
-    processText(parkourText, 1, 28, 3); // Start from column 10 and row 5
+    processText(parkourText, 1, 28, 3);
     for (const string &line : ruokrapText)
     {
         gotoxy(28, i);
@@ -124,19 +127,15 @@ int main()
     getch();
     processTextString(menu, 0.005, 1, 1);
 
-    // y = 28, x = 40
-    // printXY(defaultMenu, 40, 28);
     int x = 35;
     int y = 28;
 
     printMenu(defaultMenu, sizeof(defaultMenu) / sizeof(defaultMenu[0]), 41, 28);
     this_thread::sleep_for(chrono::milliseconds(100));
-    // x = 56;
-    // y = 30;
     printMenu(normalMenu, menuSizes[0], 49, 29);
 
     i = 0;
-    a:
+a:
     while (true)
     {
         char ch = _getch();
@@ -157,18 +156,26 @@ int main()
         else
         {
             system("cls");
-            if(i==0){
-            cout << inGameuUI;
-            break;
+            if (i == 0)
+            {
+                cout << inGameuUI;
+                break;
             }
-            if(i==1){
+            if (i == 1)
+            {
                 cout << "Click any key to get back to menu.";
                 getch();
             }
-            else {
+            else
+            {
                 cout << "Parkour Ruokrap by Pembantai 24 SKS (P24S)" << endl;
                 cout << "Click any key to get back to menu.";
+                getch();
             }
+            system("cls");
+            processTextString(menu, 0.005, 1, 1);
+            printMenu(defaultMenu, sizeof(defaultMenu) / sizeof(defaultMenu[0]), 41, 28);
+            printMenu(menuArr[i], menuSizes[i], 49, 29 + i * 7);
             goto a;
         }
     }
@@ -182,5 +189,4 @@ int main()
         cout << gameStarts[ll];
         this_thread::sleep_for(chrono::seconds(1));
     }
-    
 }
