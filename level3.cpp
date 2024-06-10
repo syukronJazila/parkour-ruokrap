@@ -13,13 +13,31 @@ struct Ammo{
 Player p1("A",21,10,21,10);
 vector<Player> e1;
 vector<Ammo> peluru;
-bool  isLift = false, isOnWall = false;
-int jmlhTurun = 0;
+
 int skor=0;
 
 const int n = 50;
 string ground1[n],ground2[n],ground3[n],ground4[n],ground5[n]; 
 
+int r, k, musuh, jurang, nWall, groundLvl;
+bool isEnemy, isJurang, isWall;
+
+void summonEnemy(int x,int y){
+    Player tempEnemy("B",x,y,x,y);
+    gotoxy(x,y); cout << tempEnemy.karakter;
+    e1.push_back(tempEnemy);
+}
+
+void setDefault(){
+     // inisialisasi ground dengan nilai default
+    for (k = 0; k < n; k++){
+        ground1[k] = '#'; 
+        ground2[k] = " "; 
+        ground3[k] = " "; 
+        ground4[k] = " "; 
+        ground5[k] = " "; 
+    }
+}
 
 void setGround(string a,string b,string c,string d,string e){
     ground1[0] = a; 
@@ -31,36 +49,97 @@ void setGround(string a,string b,string c,string d,string e){
 
 void printGround(){
     gotoxy(0,7);
-    for(int j = 0; j < n; j++){
-        cout << ground5[j];
+    for(k = 0; k < n; k++){
+        cout << ground5[k];
     }
     gotoxy(0,8);
-    for(int j = 0; j < n; j++){
-        cout << ground4[j];
+    for(k = 0; k < n; k++){
+        cout << ground4[k];
     }
     gotoxy(0,9);
-    for(int j = 0; j < n; j++){ 
-        cout << ground3[j];
+    for(k = 0; k < n; k++){ 
+        cout << ground3[k];
     }
     gotoxy(0,10);
-    for(int j = 0; j < n; j++){ 
-        cout << ground2[j];
+    for(k = 0; k < n; k++){ 
+        cout << ground2[k];
     }
     gotoxy(0,11);
-    for(int j = 0; j < n; j++){ 
-        cout << ground1[j];
+    for(k = 0; k < n; k++){ 
+        cout << ground1[k];
     }
 }
 
 void shiftGround(){
-    // menggeser tiap elemen arr dan arr2 ke kanan agar tampak seperti berjalan (sepert queue)
-    for (int j = n-1; j >= 0; j--)
-    {
-        ground1[j] = ground1[j-1];
-        ground2[j] = ground2[j-1];        
-        ground3[j] = ground3[j-1];        
-        ground4[j] = ground4[j-1];        
-        ground5[j] = ground5[j-1];        
+    // menggeser tiap elemen ground ke kanan agar tampak seperti berjalan (sepert queue)
+    for (k = n-1; k >= 1; k--){
+        ground1[k] = ground1[k-1];
+        ground2[k] = ground2[k-1];        
+        ground3[k] = ground3[k-1];        
+        ground4[k] = ground4[k-1];        
+        ground5[k] = ground5[k-1];        
+    }
+}
+
+void cekGround(){
+    r = rand() % 100 + 1;
+    if(jurang >= 2 && jurang <= 5){ 
+     // untuk memastikan bahwa setelah muncul jurang jurang 4 tanah setelahnya tidak muncul jurang lain
+        isJurang = false;
+        if(r <= 33){ r = 61; }
+        jurang++;
+        if (jurang == 6){ jurang = 0; }
+    }
+    if(isJurang){ // mengecek apakah muncul jurang 
+        r = 14; // jika iya maka buat jurang kedua
+    }
+    if(isWall){ 
+        if(r < 15 && nWall > 4 && nWall < 11){ goto skip; }
+        if (r % 2 == 0){ nWall++; } // jika angka random genap maka banyak dinding dikurang satu
+        nWall++; 
+        if(nWall > 13){ // batas kemunculan dinding adalah 13 (karena nWall bisa bernilai 1 - 13)
+            nWall = 0;
+            musuh++;
+            if((r < 50 && groundLvl > 2) || groundLvl == 5){ 
+                groundLvl--; // mengurangi level ground
+            }else if(r > 60){
+                groundLvl++; // menambah level ground
+            }else{ 
+                r = 34; // setDefault
+                goto skip;
+            }
+        }
+        r=51;
+    }
+    skip:
+    if(r > 50 ){ // kalau angka random 51 - 100 maka muncul dinding
+        switch (groundLvl)
+            {
+            case 2:
+                setGround("#","#"," "," "," ");
+                if (musuh == 1 && e1.size() == 0){summonEnemy(0,10); musuh = 0;}
+                break;
+            case 3:
+                setGround("#","#","#"," "," ");
+                if (musuh >= 2 && e1.size() == 0){summonEnemy(0,10); musuh = 0;}
+                break;
+            case 4:
+                setGround("#","#","#","#"," ");
+                if (musuh >= 2 && e1.size() == 0){summonEnemy(0,10); musuh = 0;}
+                break;
+            case 5:
+                setGround("#","#","#","#","#");
+                break;
+            default: 
+                break;
+            }
+        isWall = true;
+    }else if(r > 33){ // 34 - 50 set default
+        setGround("#"," "," "," "," ");
+    }else{ // 0 - 33 muncul jurang 
+        isJurang = true;
+        jurang++;
+        setGround(" "," "," "," "," ");
     }
 }
 
@@ -90,7 +169,6 @@ void cekTombol(bool *isDead) {
         
         }
         Sleep(100);
-        
     }
 }
 
@@ -98,26 +176,26 @@ void cekTombol(bool *isDead) {
 
 //? Disini ntar klo mau build tempatnya, sekalian gerakan peluru
 void tembakPeluru(){
-            int j;
-            //? Kita gerakkan setiap peluru
-            for (j=peluru.size()-1; j>=0; j--){
-               
-                gotoxy(peluru[j].LposX, peluru[j].LposY); cout << " ";  // Hapus karakter lama
-                peluru[j].posX--;
-                //Menghapus peluru yg kenak dinding
-                if (peluru[j].posX == 3) peluru.erase(peluru.begin() + j);
-                else if (ground2[peluru[j].posX] == "#" && peluru[j].posY == 10 )peluru.erase(peluru.begin() + j);
-                else if (ground3[peluru[j].posX] == "#" && peluru[j].posY == 9 )peluru.erase(peluru.begin() + j);
-                else if (ground4[peluru[j].posX] == "#" && peluru[j].posY == 8 )peluru.erase(peluru.begin() + j);
-                else if (ground5[peluru[j].posX] == "#" && peluru[j].posY == 7 )peluru.erase(peluru.begin() + j);
-                else {
-                    gotoxy(peluru[j].posX, peluru[j].posY); cout << "-";    // Cetak karakter di posisi baru
-                    peluru[j].LposX = peluru[j].posX;  // Simpan posisi lama
-                    peluru[j].LposY = peluru[j].posY; 
-                }
-               
-                 
-            }  
+    int j;
+    //? Kita gerakkan setiap peluru
+    for (j=peluru.size()-1; j>=0; j--){
+       
+        gotoxy(peluru[j].LposX, peluru[j].LposY); cout << " ";  // Hapus karakter lama
+        peluru[j].posX--;
+        //Menghapus peluru yg kenak dinding
+        if (peluru[j].posX == 3) peluru.erase(peluru.begin() + j);
+        else if (ground2[peluru[j].posX] == "#" && peluru[j].posY == 10 )peluru.erase(peluru.begin() + j);
+        else if (ground3[peluru[j].posX] == "#" && peluru[j].posY == 9 )peluru.erase(peluru.begin() + j);
+        else if (ground4[peluru[j].posX] == "#" && peluru[j].posY == 8 )peluru.erase(peluru.begin() + j);
+        else if (ground5[peluru[j].posX] == "#" && peluru[j].posY == 7 )peluru.erase(peluru.begin() + j);
+        else {
+            gotoxy(peluru[j].posX, peluru[j].posY); cout << "-";    // Cetak karakter di posisi baru
+            peluru[j].LposX = peluru[j].posX;  // Simpan posisi lama
+            peluru[j].LposY = peluru[j].posY; 
+        }
+       
+         
+    }  
  }  
 
 void Kalah(bool isJatuh,bool *isDead){
@@ -132,6 +210,7 @@ void Kalah(bool isJatuh,bool *isDead){
     gotoxy(19,5);
     cout << "YOUR SCORE:" << skor;
 }
+
 void enemyMove(bool *isDead){
     while(!*isDead){
         for (int i=e1.size()-1; i>=0; i--){
@@ -153,22 +232,40 @@ void enemyMove(bool *isDead){
             else if (ground4[e1[i].posX + 1]== "#" && !e1[i].jump4 ) {e1[i].jump4 = true; e1[i].posY--;}
             else if (ground5[e1[i].posX + 1]== "#" && !e1[i].jump5 ) {e1[i].jump5 = true; e1[i].posY--;}
             // kalau skrg musuh  di atas ground 5 dan g5 kosong, turunkan enemy
-            else if (ground5[e1[i].posX] == " " && e1[i].jump5){e1[i].jump5 = false; e1[i].posY++;}
-            else if (ground4[e1[i].posX] == " " && e1[i].jump4){e1[i].jump4 = false; e1[i].posY++;}
-            else if (ground3[e1[i].posX] == " " && e1[i].jump3){e1[i].jump3 = false; e1[i].posY++;}
-            else if (ground2[e1[i].posX] == " " && e1[i].jump2){e1[i].jump2 = false; e1[i].posY++;}
-
+            else if (ground5[e1[i].posX] == " " && ground5[e1[i].posX+1] == " " && ground5[e1[i].posX+2] == " " && e1[i].jump5){e1[i].jump5 = false; e1[i].posY++;}
+            else if (ground4[e1[i].posX] == " " && ground4[e1[i].posX+1] == " " && ground4[e1[i].posX+2] == " "&& e1[i].jump4){e1[i].jump4 = false; e1[i].posY++;}
+            else if (ground3[e1[i].posX] == " " && ground3[e1[i].posX+1] == " " && ground3[e1[i].posX+2] == " " && e1[i].jump3){e1[i].jump3 = false; e1[i].posY++;}
+            else if (ground2[e1[i].posX] == " " && ground2[e1[i].posX+1] == " " && ground2[e1[i].posX+2] == " "&& e1[i].jump2){e1[i].jump2 = false; e1[i].posY++;}
+            
+            else if ((ground5[e1[i].posX] == " " || (ground5[e1[i].posX] == " " && ground5[e1[i].posX+1] == " ")) && e1[i].jump5){e1[i].jump5 = false; e1[i].lompatEnemy(ground5,ground4,ground3,ground2);}
+            else if ((ground4[e1[i].posX] == " " || (ground4[e1[i].posX] == " " && ground4[e1[i].posX+1] == " "))  && e1[i].jump4){e1[i].jump4 = false; e1[i].lompatEnemy(ground5,ground4,ground3,ground2);}
+            else if ((ground3[e1[i].posX] == " " || (ground3[e1[i].posX] == " " && ground3[e1[i].posX+1] == " "))  && e1[i].jump3){e1[i].jump3 = false; e1[i].lompatEnemy(ground5,ground4,ground3,ground2);}
+            else if ((ground2[e1[i].posX] == " " || (ground2[e1[i].posX] == " " && ground2[e1[i].posX+1] == " "))  && e1[i].jump2){e1[i].jump2 = false; e1[i].lompatEnemy(ground5,ground4,ground3,ground2);}
             e1[i].pindahPosisi();
         }
         Sleep(170);
     }
 }
 
-void summonEnemy(int x,int y){
-    Player tempEnemy("B",x,y,x,y);
-    gotoxy(x,y); cout << tempEnemy.karakter;
-    e1.push_back(tempEnemy);
-            
+void cekPlayer(bool* isDead){
+     // Periksa apakah karakter harus turun satu ground
+    if(p1.posY == 9 && ground2[p1.posX] == " " && (ground2[p1.posX+1] == "#" || ground2[p1.posX+2] == "#" || ground2[p1.posX+3] == "#"))p1.moveDown();
+    if(p1.posY == 8 && ground3[p1.posX] == " " && (ground3[p1.posX+1] == "#" || ground3[p1.posX+2] == "#" || ground3[p1.posX+3] == "#"))p1.moveDown();
+    if(p1.posY == 7 && ground4[p1.posX] == " " && (ground4[p1.posX+1] == "#" || ground4[p1.posX+2] == "#" || ground4[p1.posX+3] == "#"))p1.moveDown();
+    if(p1.posY == 6 && ground5[p1.posX] == " " && (ground5[p1.posX+1] == "#" || ground5[p1.posX+2] == "#" || ground5[p1.posX+3] == "#"))p1.moveDown();
+    
+    //Periksa apakah karakter nabrak dinding
+    if(p1.posY == 11 && ground1[p1.posX] == "#")Kalah(false,isDead);
+    if(p1.posY == 10 && ground2[p1.posX] == "#")Kalah(false,isDead);
+    if(p1.posY == 9 && ground3[p1.posX] == "#")Kalah(false,isDead);
+    if(p1.posY == 8 && ground4[p1.posX] == "#")Kalah(false,isDead);
+    if(p1.posY == 7 && ground5[p1.posX] == "#")Kalah(false,isDead);
+    
+    // Periksa apakah karakter jatuh ke jurang
+    if(p1.posY == 10 && ground1[p1.posX] == " " && ground2[p1.posX-2] == "#")Kalah(true,isDead);
+    if(p1.posY == 9 && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground3[p1.posX-2] == "#")Kalah(true,isDead);
+    if(p1.posY == 8 && ground3[p1.posX] == " " && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground4[p1.posX-2] == "#")Kalah(true,isDead);
+    if(p1.posY == 7 && ground4[p1.posX] == " " && ground3[p1.posX] == " " && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground5[p1.posX-2] == "#")Kalah(true,isDead);
 }
 
 main(){
@@ -182,128 +279,27 @@ main(){
 	thread threadPemeriksaanTombol(cekTombol, &isDead);
     thread musuhGerak(enemyMove, &isDead);
 
-    int i = 0,r,musuh=0,nEnemy=0,groundLvl=2;
-    string newObstacle;
     char c;
+    musuh=0; jurang = 0; nWall = 0; groundLvl=2;
+    isEnemy = false; isJurang = false; isWall = false;
 
-    // inisialisasi ground dengan nilai default
-    for (int j = 0; j < n; j++)
-    {
-        ground1[j] = '#'; 
-        ground2[j] = " "; 
-        ground3[j] = " "; 
-        ground4[j] = " "; 
-        ground5[j] = " "; 
-    }
+    setDefault();
 
-    bool isEnemy = false;
-    bool isJurang = false;
-    bool isWall = false;
-    int jurang = 0;
-    int nWall = 0;
 	while (!isDead)
     {
         system("CLS");
-        r = rand() % 100 + 1;
+    
         shiftGround();
-
-        if(jurang >= 2 && jurang <= 5){ 
-         // untuk memastikan bahwa setelah muncul jurang jurang 4 tanah setelahnya 
-         // tidak muncul jurang lain
-            isJurang = false;
-            if(r <= 33){
-                r = 61;
-            }
-            jurang++;
-            if (jurang == 6){ jurang = 0;}
-        }
-        if(isJurang){ // mengecek apakah muncul jurang 
-            r = 14; // jika iya maka buat jurang kedua
-        }
-        if(isWall){ 
-            if(r < 15 && nWall > 4 && nWall < 11){
-                goto skip;
-            }
-            if (r % 2 == 0){ // jika angka random genap maka banyak dinding dikurang satu
-                nWall++; 
-            }
-            nWall++; 
-            if(nWall > 13){ // batas kemunculan dinding adalah 13 (karena nWall bisa bernilai 1 - 13)
-                nWall = 0;
-                musuh++;
-                if((r < 50 && groundLvl > 2) || groundLvl == 5){ 
-                    groundLvl--; // mengurangi level ground
-                }else if(r > 60){
-                    groundLvl++; // menambah level ground
-                }else{ // buat jadi else if groundLvl == 2 jika hanya ingin lvl2 ke lvl 1
-                    r = 34; // jurang baru 
-                    goto skip;
-                }
-            }
-            r=51;
-        }
-        skip:
-        if(r > 50 ){ // kalau angka random 50 - 100 maka muncul dinding
-            switch (groundLvl)
-                {
-                case 2:
-                    setGround("#","#"," "," "," ");
-                    if (musuh == 1 && e1.size() == 0){summonEnemy(0,10); musuh = 0;}
-                    break;
-                case 3:
-                    setGround("#","#","#"," "," ");
-                    if (musuh >= 2 && e1.size() == 0){summonEnemy(0,10); musuh = 0;}
-                    break;
-                case 4:
-                    setGround("#","#","#","#"," ");
-                    if (musuh >= 2 && e1.size() == 0){summonEnemy(0,10); musuh = 0;}
-                    break;
-                case 5:
-                    setGround("#","#","#","#","#");
-                    break;
-
-                default: 
-                    break;
-                }
-                isWall = true;
-            
-            
-        }else if(r > 33){ // 34 - 50 set default
-            setGround("#"," "," "," "," ");
-        }else{ // 0 - 33 muncul jurang 
-            isJurang = true;
-            jurang++;
-            setGround(" "," "," "," "," ");
-        }
-
+        cekGround();
         printGround();
 
-        //skor++;
         gotoxy(0,0);
         cout << "Skor = " << skor;
 
         tembakPeluru();
+        cekPlayer(&isDead);
 
-        // Periksa apakah karakter harus turun satu ground
-        if(p1.posY == 9 && ground2[p1.posX] == " " && (ground2[p1.posX+1] == "#" || ground2[p1.posX+2] == "#" || ground2[p1.posX+3] == "#"))p1.moveDown();
-        if(p1.posY == 8 && ground3[p1.posX] == " " && (ground3[p1.posX+1] == "#" || ground3[p1.posX+2] == "#" || ground3[p1.posX+3] == "#"))p1.moveDown();
-        if(p1.posY == 7 && ground4[p1.posX] == " " && (ground4[p1.posX+1] == "#" || ground4[p1.posX+2] == "#" || ground4[p1.posX+3] == "#"))p1.moveDown();
-        if(p1.posY == 6 && ground5[p1.posX] == " " && (ground5[p1.posX+1] == "#" || ground5[p1.posX+2] == "#" || ground5[p1.posX+3] == "#"))p1.moveDown();
-
-        //Periksa apakah karakter nabrak dinding
-        if(p1.posY == 11 && ground1[p1.posX] == "#")Kalah(false,&isDead);
-        if(p1.posY == 10 && ground2[p1.posX] == "#")Kalah(false,&isDead);
-        if(p1.posY == 9 && ground3[p1.posX] == "#")Kalah(false,&isDead);
-        if(p1.posY == 8 && ground4[p1.posX] == "#")Kalah(false,&isDead);
-        if(p1.posY == 7 && ground5[p1.posX] == "#")Kalah(false,&isDead);
-
-        // Periksa apakah karakter jatuh ke jurang
-        if(p1.posY == 10 && ground1[p1.posX] == " " && ground2[p1.posX-2] == "#")Kalah(true,&isDead);
-        if(p1.posY == 9 && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground3[p1.posX-2] == "#")Kalah(true,&isDead);
-        if(p1.posY == 8 && ground3[p1.posX] == " " && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground4[p1.posX-2] == "#")Kalah(true,&isDead);
-        if(p1.posY == 7 && ground4[p1.posX] == " " && ground3[p1.posX] == " " && ground2[p1.posX] == " " && ground1[p1.posX] == " " && ground5[p1.posX-2] == "#")Kalah(true,&isDead);
-
-        gotoxy(p1.posX,p1.posY); cout << p1.karakter ;
+        gotoxy(p1.posX,p1.posY); cout << p1.karakter ; 
         Sleep(200);
     }
 
